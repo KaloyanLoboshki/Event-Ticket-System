@@ -10,17 +10,19 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 @Configuration
 public class ClientConfig {
 
-    @Value("${event-service.url}")
-    private String eventServiceUrl;
-
     @Bean
-    public EventClient eventClient() {
+    public EventClient eventClient(@Value("${event-service.url}") String eventServiceUrl) {
         WebClient webClient = WebClient.builder()
                 .baseUrl(eventServiceUrl)
                 .build();
-        return HttpServiceProxyFactory
-                .builderFor(WebClientAdapter.create(webClient))
-                .build()
-                .createClient(EventClient.class);
+
+        WebClientAdapter adapter = WebClientAdapter.create(webClient);
+
+        HttpServiceProxyFactory factory = HttpServiceProxyFactory
+                .builder()
+                .exchangeAdapter(adapter)
+                .build();
+
+        return factory.createClient(EventClient.class);
     }
 }

@@ -3,7 +3,11 @@ package com.kaloyanloboshki.eventservice.service;
 import com.kaloyanloboshki.eventservice.EventSpecification;
 import com.kaloyanloboshki.eventservice.exceptions.EventNotFoundException;
 import com.kaloyanloboshki.eventservice.exceptions.InsufficientSeatsException;
+import com.kaloyanloboshki.eventservice.mapper.EventMapper;
+import com.kaloyanloboshki.eventservice.model.dto.EventCreateRequest;
 import com.kaloyanloboshki.eventservice.model.dto.EventFilter;
+import com.kaloyanloboshki.eventservice.model.dto.EventResponse;
+import com.kaloyanloboshki.eventservice.model.dto.EventUpdateRequest;
 import com.kaloyanloboshki.eventservice.model.entity.Event;
 import com.kaloyanloboshki.eventservice.repository.EventRepository;
 import org.springframework.stereotype.Service;
@@ -14,39 +18,55 @@ import java.util.List;
 @Service
 public class EventService {
 
-    public static final String EVENT_NOT_FOUND_MESSAGE = "Event with id: %d does not exists!";
+    public static final String EVENT_NOT_FOUND_MESSAGE = "Event with id: %d does not exist!";
     public static final String NOT_ENOUGH_AVAILABLE_SEATS = "Not enough available seats!";
+
     private final EventRepository eventRepository;
+    private final EventMapper eventMapper;
 
-    public EventService(EventRepository eventRepository) {
+    public EventService(EventRepository eventRepository, EventMapper eventMapper) {
         this.eventRepository = eventRepository;
+        this.eventMapper = eventMapper;
     }
 
-    public Event getEventById(long eventId) {
-        return eventRepository.findById(eventId)
+    @Transactional(readOnly = true)
+    public EventResponse getEventById(long eventId) {
+        Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException(String.format(EVENT_NOT_FOUND_MESSAGE, eventId)));
+        return eventMapper.toResponse(event);
     }
 
-    public List<Event> getEvents(EventFilter filter) {
-        return eventRepository.findAll(EventSpecification.withFilter(filter));
+    @Transactional(readOnly = true)
+    public List<EventResponse> getEvents(EventFilter filter) {
+        List<Event> events = eventRepository.findAll(EventSpecification.withFilter(filter));
+        return events.stream()
+                .map(eventMapper::toResponse)
+                .toList();
     }
 
-    public Event save(Event event) {
-        return eventRepository.save(event);
+    @Transactional
+    public EventResponse save(EventCreateRequest request) {
+        Event event = eventMapper.toEntity(request);
+        event.setAvailableSeats(request.getTotalSeats());
+
+        Event savedEvent = eventRepository.save(event);
+        return eventMapper.toResponse(savedEvent);
     }
 
-    public Event update(long eventId, Event event) {
-        eventRepository.findById(eventId)
+    @Transactional
+    public EventResponse update(long eventId, EventUpdateRequest request) {
+        Event existingEvent = eventRepository.findByIdWithLock(eventId)
                 .orElseThrow(() -> new EventNotFoundException(String.format(EVENT_NOT_FOUND_MESSAGE, eventId)));
-        event.setId(eventId);
 
-        return eventRepository.save(event);
+        eventMapper.updateEventFromDto(request, existingEvent);
+
+        return eventMapper.toResponse(existingEvent);
     }
 
+    @Transactional
     public void delete(long eventId) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException(String.format(EVENT_NOT_FOUND_MESSAGE, eventId)));
-
         eventRepository.delete(event);
     }
 
