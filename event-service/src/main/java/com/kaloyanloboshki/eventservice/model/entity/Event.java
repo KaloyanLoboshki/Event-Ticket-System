@@ -10,7 +10,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "events")
@@ -37,10 +36,10 @@ public class Event {
     private String description;
 
     @Column(nullable = false)
-    private ZonedDateTime startTime;
+    private LocalDateTime startTime;
 
     @Column(nullable = false)
-    private ZonedDateTime endTime;
+    private LocalDateTime endTime;
 
     @Column(nullable = false)
     private BigDecimal price;

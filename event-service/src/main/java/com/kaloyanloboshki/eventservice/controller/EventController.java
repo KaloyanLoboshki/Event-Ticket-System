@@ -1,7 +1,9 @@
 package com.kaloyanloboshki.eventservice.controller;
 
+import com.kaloyanloboshki.eventservice.model.dto.EventCreateRequest;
 import com.kaloyanloboshki.eventservice.model.dto.EventFilter;
-import com.kaloyanloboshki.eventservice.model.entity.Event;
+import com.kaloyanloboshki.eventservice.model.dto.EventResponse;
+import com.kaloyanloboshki.eventservice.model.dto.EventUpdateRequest;
 import com.kaloyanloboshki.eventservice.service.EventService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -21,24 +23,24 @@ public class EventController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Event>> getEvents(@ModelAttribute EventFilter eventFilter) {
+    public ResponseEntity<List<EventResponse>> getEvents(@ModelAttribute EventFilter eventFilter) {
         return ResponseEntity.ok(eventService.getEvents(eventFilter));
     }
 
     @GetMapping("/{eventId}")
-    public ResponseEntity<Event> getEvent(@PathVariable long eventId) {
+    public ResponseEntity<EventResponse> getEvent(@PathVariable long eventId) {
         return ResponseEntity.ok(eventService.getEventById(eventId));
     }
 
     @PostMapping
-    public ResponseEntity<Event> createEvent(@Valid @RequestBody Event event) {
+    public ResponseEntity<EventResponse> createEvent(@Valid @RequestBody EventCreateRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(eventService.save(event));
+                .body(eventService.save(request));
     }
 
-    @PutMapping("/{eventId}")
-    public ResponseEntity<Event> updateEvent(@PathVariable long eventId, @Valid @RequestBody Event event) {
-        return ResponseEntity.ok(eventService.update(eventId, event));
+    @PatchMapping("/{eventId}")
+    public ResponseEntity<EventResponse> updateEvent(@PathVariable long eventId, @Valid @RequestBody EventUpdateRequest request) {
+        return ResponseEntity.ok(eventService.update(eventId, request));
     }
 
     @DeleteMapping("/{eventId}")
@@ -56,6 +58,6 @@ public class EventController {
     @PatchMapping("/{id}/seats/decrement")
     public ResponseEntity<Void> decrementSeats(@PathVariable long id, @RequestParam int quantity) {
         eventService.decrement(id, quantity);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }
