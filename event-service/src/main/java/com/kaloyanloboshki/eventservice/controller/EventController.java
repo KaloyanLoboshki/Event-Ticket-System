@@ -10,9 +10,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController()
+@RestController
 @RequestMapping("/events")
 public class EventController {
+
     private final EventService eventService;
 
     public EventController(EventService eventService) {
@@ -20,7 +21,7 @@ public class EventController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Event>> getEvents(@Valid @RequestBody EventFilter eventFilter) {
+    public ResponseEntity<List<Event>> getEvents(@ModelAttribute EventFilter eventFilter) {
         return ResponseEntity.ok(eventService.getEvents(eventFilter));
     }
 
@@ -30,20 +31,31 @@ public class EventController {
     }
 
     @PostMapping
-    public ResponseEntity<Event> create(@Valid @RequestBody Event event) {
+    public ResponseEntity<Event> createEvent(@Valid @RequestBody Event event) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(eventService.save(event));
     }
 
     @PutMapping("/{eventId}")
-    public ResponseEntity<Event> update(@PathVariable long eventId, @Valid @RequestBody Event event) {
+    public ResponseEntity<Event> updateEvent(@PathVariable long eventId, @Valid @RequestBody Event event) {
         return ResponseEntity.ok(eventService.update(eventId, event));
     }
 
     @DeleteMapping("/{eventId}")
-    public ResponseEntity<Void> delete(@PathVariable long eventId) {
+    public ResponseEntity<Void> deleteEvent(@PathVariable long eventId) {
         eventService.delete(eventId);
-        
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/seats/increment")
+    public ResponseEntity<Void> incrementSeats(@PathVariable long id, @RequestParam int quantity) {
+        eventService.increment(id, quantity);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/{id}/seats/decrement")
+    public ResponseEntity<Void> decrementSeats(@PathVariable long id, @RequestParam int quantity) {
+        eventService.decrement(id, quantity);
+        return ResponseEntity.ok().build();
     }
 }

@@ -1,13 +1,15 @@
 package com.kaloyanloboshki.eventservice.model.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -22,30 +24,36 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @NotBlank
+    @Column(nullable = false)
     private String title;
 
-    @NotBlank
+    @Column(nullable = false)
     private String location;
 
-    @NotBlank
+    @Column(nullable = false)
     private String category;
 
-    @NotBlank
+    @Column(nullable = false)
     private String description;
 
-    @NonNull
+    @Column(nullable = false)
     private ZonedDateTime startTime;
 
-    @NonNull
+    @Column(nullable = false)
     private ZonedDateTime endTime;
 
-    @NonNull
+    @Column(nullable = false)
     private BigDecimal price;
 
+    @Column(nullable = false)
+    private Integer availableSeats;
+
+    @Column(nullable = false)
+    private Integer totalSeats;
+
     @CreationTimestamp
-    private Instant createdAt;
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    private Instant updatedAt;
+    private LocalDateTime updatedAt;
 }
