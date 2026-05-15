@@ -3,6 +3,7 @@ package com.kaloyanloboshki.eventservice.service;
 import com.kaloyanloboshki.eventservice.EventSpecification;
 import com.kaloyanloboshki.eventservice.exceptions.EventNotFoundException;
 import com.kaloyanloboshki.eventservice.exceptions.InsufficientSeatsException;
+import com.kaloyanloboshki.eventservice.kafka.EventProducer;
 import com.kaloyanloboshki.eventservice.mapper.EventMapper;
 import com.kaloyanloboshki.eventservice.model.dto.EventCreateRequest;
 import com.kaloyanloboshki.eventservice.model.dto.EventFilter;
@@ -23,10 +24,12 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
+    private final EventProducer eventProducer;
 
-    public EventService(EventRepository eventRepository, EventMapper eventMapper) {
+    public EventService(EventRepository eventRepository, EventMapper eventMapper, EventProducer eventProducer) {
         this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
+        this.eventProducer = eventProducer;
     }
 
     @Transactional(readOnly = true)
@@ -45,20 +48,22 @@ public class EventService {
     }
 
     @Transactional
-    public EventResponse save(EventCreateRequest request) {
+    public EventResponse create(EventCreateRequest request) {
         Event event = eventMapper.toEntity(request);
         event.setAvailableSeats(request.getTotalSeats());
 
         Event savedEvent = eventRepository.save(event);
+        eventProducer.sendEventCreated(savedEvent);
         return eventMapper.toResponse(savedEvent);
     }
 
     @Transactional
     public EventResponse update(long eventId, EventUpdateRequest request) {
-        Event existingEvent = eventRepository.findByIdWithLock(eventId)
+        Event existingEvent = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException(String.format(EVENT_NOT_FOUND_MESSAGE, eventId)));
 
         eventMapper.updateEventFromDto(request, existingEvent);
+        eventProducer.sendEventUpdated(existingEvent);
 
         return eventMapper.toResponse(existingEvent);
     }
