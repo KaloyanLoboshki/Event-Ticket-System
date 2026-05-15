@@ -54,4 +54,8 @@ public class BookingService {
     public List<Booking> bookingsPerUser(long userId) {
         return bookingRepository.findByUserId(userId);
     }
+
+    public List<Booking> bookingsPerEvent(long eventId) {
+        return bookingRepository.findAllByEventId(eventId);
+    }
 }
