@@ -1,8 +1,8 @@
 package com.kaloyanloboshki.eventservice.service;
 
-import com.kaloyanloboshki.eventservice.EventSpecification;
 import com.kaloyanloboshki.eventservice.exceptions.EventNotFoundException;
 import com.kaloyanloboshki.eventservice.exceptions.InsufficientSeatsException;
+import com.kaloyanloboshki.eventservice.filter.EventSpecification;
 import com.kaloyanloboshki.eventservice.kafka.EventProducer;
 import com.kaloyanloboshki.eventservice.mapper.EventMapper;
 import com.kaloyanloboshki.eventservice.model.dto.EventCreateRequest;

@@ -1,4 +1,4 @@
-package com.kaloyanloboshki.eventservice;
+package com.kaloyanloboshki.eventservice.filter;
 
 import com.kaloyanloboshki.eventservice.model.dto.EventFilter;
 import com.kaloyanloboshki.eventservice.model.entity.Event;
