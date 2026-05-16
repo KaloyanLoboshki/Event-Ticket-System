@@ -35,7 +35,7 @@ public class EventController {
     @PostMapping
     public ResponseEntity<EventResponse> createEvent(@Valid @RequestBody EventCreateRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(eventService.save(request));
+                .body(eventService.create(request));
     }
 
     @PatchMapping("/{eventId}")

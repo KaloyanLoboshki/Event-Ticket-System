@@ -32,8 +32,13 @@ public class BookingController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping
-    public ResponseEntity<List<Booking>> bookingsPerUser(@RequestParam long userId) {
+    @GetMapping("user/{userId}")
+    public ResponseEntity<List<Booking>> bookingsPerUser(@PathVariable long userId) {
         return ResponseEntity.ok(bookingService.bookingsPerUser(userId));
+    }
+
+    @GetMapping("event/{eventId}")
+    public ResponseEntity<List<Booking>> bookingsPerEvent(@PathVariable long eventId) {
+        return ResponseEntity.ok(bookingService.bookingsPerEvent(eventId));
     }
 }
