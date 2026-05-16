@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="booking-service" target="21" />
+      <module name="booking-service.main" target="21" />
+      <module name="booking-service.test" target="21" />
+      <module name="event-service" target="21" />
+      <module name="event-ticket-system" target="21" />
+      <module name="notification-service" target="21" />
+      <module name="preference-service" target="21" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="booking-service" options="-parameters" />
+      <module name="booking-service.main" options="-parameters" />
+      <module name="event-service" options="-parameters" />
+      <module name="preference-service" options="-parameters" />
+    </option>
+  </component>
+</project>
