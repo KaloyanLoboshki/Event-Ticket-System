@@ -11,7 +11,7 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 public class ClientConfig {
 
     @Bean
-    public BookingClient eventClient(@Value("${booking-service.url}") String bookingServiceUrl) {
+    public BookingClient bookingClient(@Value("${booking-service.url}") String bookingServiceUrl) {
         WebClient webClient = WebClient.builder()
                 .baseUrl(bookingServiceUrl)
                 .build();
@@ -24,5 +24,21 @@ public class ClientConfig {
                 .build();
 
         return factory.createClient(BookingClient.class);
+    }
+
+    @Bean
+    public PreferenceClient preferenceClient(@Value("${preference-service.url}") String preferenceServiceUrl) {
+        WebClient webClient = WebClient.builder()
+                .baseUrl(preferenceServiceUrl)
+                .build();
+
+        WebClientAdapter adapter = WebClientAdapter.create(webClient);
+
+        HttpServiceProxyFactory factory = HttpServiceProxyFactory
+                .builder()
+                .exchangeAdapter(adapter)
+                .build();
+
+        return factory.createClient(PreferenceClient.class);
     }
 }

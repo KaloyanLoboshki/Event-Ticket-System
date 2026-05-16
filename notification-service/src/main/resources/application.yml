@@ -25,3 +25,6 @@ server:
 
 booking-service:
   url: http://localhost:8082
+
+preference-service:
+  url: http://localhost:8084
