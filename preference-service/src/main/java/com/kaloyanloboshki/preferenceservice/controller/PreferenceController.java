@@ -5,12 +5,11 @@ import com.kaloyanloboshki.preferenceservice.model.entity.Preference;
 import com.kaloyanloboshki.preferenceservice.service.PreferenceService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Repository
+@RestController
 @RequestMapping("preferences")
 public class PreferenceController {
 
@@ -25,9 +24,14 @@ public class PreferenceController {
         return ResponseEntity.ok(preferenceService.findByUserId(userId));
     }
 
-    @PutMapping("/{userId}")
-    public ResponseEntity<Preference> findUserById(@PathVariable long userId, @Valid @RequestBody PreferenceRequest preferenceRequest) {
+    @PatchMapping("/{userId}")
+    public ResponseEntity<Preference> update(@PathVariable long userId, @Valid @RequestBody PreferenceRequest preferenceRequest) {
         return ResponseEntity.ok(preferenceService.update(userId, preferenceRequest));
+    }
+
+    @PostMapping
+    public ResponseEntity<Preference> save(@Valid @RequestBody PreferenceRequest preferenceRequest) {
+        return ResponseEntity.ok(preferenceService.save(preferenceRequest));
     }
 
     @GetMapping

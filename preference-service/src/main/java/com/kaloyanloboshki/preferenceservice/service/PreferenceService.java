@@ -23,7 +23,8 @@ public class PreferenceService {
     }
 
     public Preference findByUserId(long userId) {
-        return preferenceRepository.findByUserId(userId);
+        return preferenceRepository.findOptionalByUserId(userId)
+                .orElseThrow(() -> new PreferenceNotFoundException(String.format(PREFERENCE_NOT_FOUND_MESSAGE, userId)));
     }
 
     public Preference update(long userId, PreferenceRequest preferenceRequest) {
@@ -32,6 +33,11 @@ public class PreferenceService {
 
         preferenceMapper.updateEventFromDto(preferenceRequest, preference);
 
+        return preferenceRepository.save(preference);
+    }
+
+    public Preference save(PreferenceRequest preferenceRequest) {
+        Preference preference = preferenceMapper.toPreferenceEntity(preferenceRequest);
         return preferenceRepository.save(preference);
     }
 
