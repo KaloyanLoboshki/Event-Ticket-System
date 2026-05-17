@@ -2,7 +2,7 @@ spring:
   application:
     name: preference-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/preferencedb
+    url: jdbc:postgresql://localhost:5435/preferencedb
     username: postgres
     password: postgres
   jpa:

@@ -10,6 +10,8 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(componentModel = "spring")
 public interface PreferenceMapper {
 
+    Preference toPreferenceEntity(PreferenceRequest preferenceRequest);
+
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEventFromDto(PreferenceRequest preferenceRequest, @MappingTarget Preference preference);
 }

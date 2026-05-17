@@ -30,7 +30,9 @@ public class KafkaConsumer {
     }
 
 
-    @KafkaListener(topics = "event-created", groupId = "notification-group")
+    @KafkaListener(topics = "event-created", groupId = "notification-group", properties = {
+            "spring.json.value.default.type=com.kaloyanloboshki.notificationservice.model.dto.EventMessage"
+    })
     public void sendEventCreatedNotification(EventMessage eventMessage) {
         List<Long> userIds = preferenceClient.getUserIdsByPreferenceCategory(eventMessage.getCategory());
 
@@ -47,7 +49,9 @@ public class KafkaConsumer {
         notifications.forEach(notification -> notificationService.sendNotification(notification.getUserId(), notification));
     }
 
-    @KafkaListener(topics = "event-updated", groupId = "notification-group")
+    @KafkaListener(topics = "event-updated", groupId = "notification-group", properties = {
+            "spring.json.value.default.type=com.kaloyanloboshki.notificationservice.model.dto.EventMessage"
+    })
     public void sendEventUpdatedNotification(EventMessage eventMessage) {
         List<Booking> bookings = bookingClient.bookingsPerEvent(eventMessage.getId());
 
@@ -66,7 +70,9 @@ public class KafkaConsumer {
         notifications.forEach(notification -> notificationService.sendNotification(notification.getUserId(), notification));
     }
 
-    @KafkaListener(topics = "ticket-booked", groupId = "notification-group")
+    @KafkaListener(topics = "ticket-booked", groupId = "notification-group", properties = {
+            "spring.json.value.default.type=com.kaloyanloboshki.notificationservice.model.dto.BookingMessage"
+    })
     public void sendTicketBookedNotification(BookingMessage bookingMessage) {
         Notification notification = new Notification();
         notification.setUserId(bookingMessage.getUserId());
@@ -77,7 +83,9 @@ public class KafkaConsumer {
         notificationService.sendNotification(notification.getUserId(), notification);
     }
 
-    @KafkaListener(topics = "ticket-cancelled", groupId = "notification-group")
+    @KafkaListener(topics = "ticket-cancelled", groupId = "notification-group", properties = {
+            "spring.json.value.default.type=com.kaloyanloboshki.notificationservice.model.dto.BookingMessage"
+    })
     public void sendTicketCancelledNotification(BookingMessage bookingMessage) {
         Notification notification = new Notification();
         notification.setUserId(bookingMessage.getUserId());
