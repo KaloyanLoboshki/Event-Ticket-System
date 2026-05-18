@@ -24,7 +24,7 @@ public class EventController {
 
     @GetMapping
     public ResponseEntity<List<EventResponse>> getEvents(@ModelAttribute EventFilter eventFilter) {
-        return ResponseEntity.ok(eventService.getEvents(eventFilter));
+        return ResponseEntity.ok(eventService.getEvents(eventFilter).getEvents());
     }
 
     @GetMapping("/{eventId}")

@@ -14,17 +14,6 @@
         </processorPath>
         <module name="preference-service" />
       </profile>
-      <profile name="Annotation profile for event-ticket-system" enabled="true">
-        <sourceOutputDir name="../generated-sources/annotations" />
-        <sourceTestOutputDir name="../generated-test-sources/test-annotations" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-        </processorPath>
-        <module name="booking-service.main" />
-        <module name="notification-service.test" />
-        <module name="booking-service.test" />
-        <module name="notification-service.main" />
-      </profile>
       <profile name="Annotation profile for event-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
@@ -35,6 +24,17 @@
           <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct-processor/1.6.3/mapstruct-processor-1.6.3.jar" />
         </processorPath>
         <module name="event-service" />
+      </profile>
+      <profile name="Annotation profile for event-ticket-system" enabled="true">
+        <sourceOutputDir name="../generated-sources/annotations" />
+        <sourceTestOutputDir name="../generated-test-sources/test-annotations" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
+        </processorPath>
+        <module name="notification-service.test" />
+        <module name="booking-service.main" />
+        <module name="booking-service.test" />
+        <module name="notification-service.main" />
       </profile>
     </annotationProcessing>
   </component>

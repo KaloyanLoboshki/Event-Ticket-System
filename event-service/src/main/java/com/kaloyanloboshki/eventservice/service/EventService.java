@@ -5,12 +5,11 @@ import com.kaloyanloboshki.eventservice.exceptions.InsufficientSeatsException;
 import com.kaloyanloboshki.eventservice.filter.EventSpecification;
 import com.kaloyanloboshki.eventservice.kafka.EventProducer;
 import com.kaloyanloboshki.eventservice.mapper.EventMapper;
-import com.kaloyanloboshki.eventservice.model.dto.EventCreateRequest;
-import com.kaloyanloboshki.eventservice.model.dto.EventFilter;
-import com.kaloyanloboshki.eventservice.model.dto.EventResponse;
-import com.kaloyanloboshki.eventservice.model.dto.EventUpdateRequest;
+import com.kaloyanloboshki.eventservice.model.dto.*;
 import com.kaloyanloboshki.eventservice.model.entity.Event;
 import com.kaloyanloboshki.eventservice.repository.EventRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +32,7 @@ public class EventService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "events", key = "#eventId")
     public EventResponse getEventById(long eventId) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException(String.format(EVENT_NOT_FOUND_MESSAGE, eventId)));
@@ -40,14 +40,18 @@ public class EventService {
     }
 
     @Transactional(readOnly = true)
-    public List<EventResponse> getEvents(EventFilter filter) {
+    @Cacheable(value = "events", key = "#filter")
+    public EventResponseList getEvents(EventFilter filter) {
         List<Event> events = eventRepository.findAll(EventSpecification.withFilter(filter));
-        return events.stream()
+        List<EventResponse> responses = events.stream()
                 .map(eventMapper::toResponse)
                 .toList();
+        
+        return new EventResponseList(responses);
     }
 
     @Transactional
+    @CacheEvict(value = "events", allEntries = true)
     public EventResponse create(EventCreateRequest request) {
         Event event = eventMapper.toEntity(request);
         event.setAvailableSeats(request.getTotalSeats());
@@ -58,6 +62,7 @@ public class EventService {
     }
 
     @Transactional
+    @CacheEvict(value = "events", allEntries = true)
     public EventResponse update(long eventId, EventUpdateRequest request) {
         Event existingEvent = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException(String.format(EVENT_NOT_FOUND_MESSAGE, eventId)));
@@ -69,6 +74,7 @@ public class EventService {
     }
 
     @Transactional
+    @CacheEvict(value = "events", allEntries = true)
     public void delete(long eventId) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException(String.format(EVENT_NOT_FOUND_MESSAGE, eventId)));
@@ -76,6 +82,7 @@ public class EventService {
     }
 
     @Transactional
+    @CacheEvict(value = "events", allEntries = true)
     public void increment(long eventId, int quantity) {
         Event event = eventRepository.findByIdWithLock(eventId)
                 .orElseThrow(() -> new EventNotFoundException(String.format(EVENT_NOT_FOUND_MESSAGE, eventId)));
@@ -84,6 +91,7 @@ public class EventService {
     }
 
     @Transactional
+    @CacheEvict(value = "events", allEntries = true)
     public void decrement(long eventId, int quantity) {
         Event event = eventRepository.findByIdWithLock(eventId)
                 .orElseThrow(() -> new EventNotFoundException(String.format(EVENT_NOT_FOUND_MESSAGE, eventId)));

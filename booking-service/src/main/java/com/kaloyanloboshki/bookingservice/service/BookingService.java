@@ -34,8 +34,6 @@ public class BookingService {
                 .status(BookingStatus.CONFIRMED)
                 .build();
 
-        bookingProducer.sendTicketBooked(newBooking);
-
         Booking savedBooking = bookingRepository.save(newBooking);
         bookingProducer.sendTicketBooked(savedBooking);
 
