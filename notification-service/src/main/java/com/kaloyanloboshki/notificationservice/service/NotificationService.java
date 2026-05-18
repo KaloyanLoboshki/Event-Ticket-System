@@ -37,7 +37,7 @@ public class NotificationService {
         SseEmitter emitter = emitters.get(userId);
         if (emitter != null) {
             try {
-                emitter.send(SseEmitter.event().data(notification));
+                emitter.send(notification);
             } catch (IOException e) {
                 emitters.remove(userId);
             }
