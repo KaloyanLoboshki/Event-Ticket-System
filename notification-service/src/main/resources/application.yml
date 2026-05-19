@@ -29,3 +29,10 @@ booking-service:
 
 preference-service:
   url: http://localhost:8084
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
